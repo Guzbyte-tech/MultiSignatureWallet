@@ -126,6 +126,8 @@ contract MultiSignature {
         );
     }
 
+    
+
     function createTransaction(
         uint256 _amount,
         string memory _typeOfTx,
