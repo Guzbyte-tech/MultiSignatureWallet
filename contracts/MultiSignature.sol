@@ -8,6 +8,10 @@ contract MultiSignature {
     uint256 public txCount;
 
     // error FewValidSigners();
+    enum transactionTypes {
+        Transfer,
+        UpdateQuorum
+    }
 
     struct Transaction {
         uint256 id;
@@ -20,7 +24,7 @@ contract MultiSignature {
         uint256 noOfApproval;
         address tokenAddress;
         address[] transactionSigners;
-        string trxType;
+        transactionTypes trxType;
         uint256 newQuorum;
     }
 
@@ -64,7 +68,7 @@ contract MultiSignature {
         require(_amount > 0, "can't send zero amount");
         require(_recipient != address(0), "address zero found");
         require(_tokenAddress != address(0), "address zero found");
-        
+
         require(
             IERC20(_tokenAddress).balanceOf(address(this)) >= _amount,
             "insufficient funds"
@@ -73,7 +77,7 @@ contract MultiSignature {
         //Create the transaction.
         createTransaction(
             _amount,
-            "deposit",
+            transactionTypes.Transfer,
             _tokenAddress,
             msg.sender,
             _recipient,
@@ -102,12 +106,9 @@ contract MultiSignature {
         trx.transactionSigners.push(msg.sender);
 
         //Get the transaction type and then perform the transaction
-        bytes32 trxTypeHash = keccak256(abi.encodePacked(trx.trxType));
-        if (trxTypeHash == keccak256(abi.encodePacked("deposit"))) {
+        if (trx.trxType == transactionTypes.Transfer) {
             IERC20(trx.tokenAddress).transfer(trx.recipient, trx.amount);
-        } else if (
-            trxTypeHash == keccak256(abi.encodePacked("quorum_update"))
-        ) {
+        } else if (trx.trxType == transactionTypes.UpdateQuorum) {
             quorum = trx.newQuorum;
         }
     }
@@ -120,7 +121,7 @@ contract MultiSignature {
 
         createTransaction(
             0,
-            "quorum_update",
+            transactionTypes.UpdateQuorum,
             address(0),
             msg.sender,
             msg.sender,
@@ -130,7 +131,7 @@ contract MultiSignature {
 
     function createTransaction(
         uint256 _amount,
-        string memory _typeOfTx,
+        transactionTypes _typeOfTx,
         address _tokenAddress,
         address sender,
         address _recipient,

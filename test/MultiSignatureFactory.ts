@@ -23,6 +23,7 @@ describe("Testing the multi signature factory contract.", function(){
     describe("Create Wallet",  function(){
 
         it("Should check if the new multisignature wallet was created successfully.", async function(){
+            
             const {sigFactory, _quorum, signers} = await loadFixture(deployMultiSignatureContract);
             await sigFactory.createMultisigWallet(_quorum, signers)
             await expect((await sigFactory.getMultiSigClones()).length).to.be.gt(0);
