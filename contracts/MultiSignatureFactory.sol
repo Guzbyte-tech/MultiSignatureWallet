@@ -4,11 +4,12 @@ pragma solidity ^0.8.9;
 import "./MultiSignature.sol";
 
 contract MultiSignatureFactory {
-
     MultiSignature[] multisigClones;
 
-    function createMultisigWallet(uint256 _quorum, address[] memory _validSigners) external returns (MultiSignature newMulsig_, uint256 length_) {
-
+    function createMultisigWallet(
+        uint256 _quorum,
+        address[] memory _validSigners
+    ) external returns (MultiSignature newMulsig_, uint256 length_) {
         newMulsig_ = new MultiSignature(_quorum, _validSigners);
 
         multisigClones.push(newMulsig_);
@@ -16,7 +17,11 @@ contract MultiSignatureFactory {
         length_ = multisigClones.length;
     }
 
-    function getMultiSigClones() external view returns(MultiSignature[] memory) {
+    function getMultiSigClones()
+        external
+        view
+        returns (MultiSignature[] memory)
+    {
         return multisigClones;
     }
 }
