@@ -1,5 +1,6 @@
 
 import { ethers } from "hardhat";
+import { token } from "../typechain-types/@openzeppelin/contracts";
 const hre = require("hardhat");
 
 async function main() {
@@ -8,8 +9,9 @@ async function main() {
   const GTKtokenAddr = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
   const walletFactory = await ethers.getContractAt("MultiSignatureFactory", factoryAddr);
-  const [owner, addr1, addr2, addr3, addr4, addr5] = await hre.ethers.getSigners();
+  const [owner, addr1, addr2, addr3, addr4, addr5, addr6] = await hre.ethers.getSigners();
   const signers = [addr1.address, addr2.address, addr3.address, addr4.address, addr5.address];
+  const recipient = addr6.address;
   // console.log(signers);
 
 
@@ -37,12 +39,17 @@ async function main() {
 
   //Interact with transfer function.
   const amountToTransfer = ethers.parseUnits("1", 18);
-  const trf = await sigWallet.connect(addr1).transfer(amountToTransfer, "0x06D97198756295A96C2158a23963306f507b2f69", GTKtokenAddr);
+  const trf = await sigWallet.connect(addr1).transfer(amountToTransfer, recipient, GTKtokenAddr);
   console.log("Transfer from multisig wallet initiated with block hash", trf.hash);
+  const recieverBalBefore = await gtkToken.balanceOf(recipient);
+  console.log(`Recipient Balance Before approval" ${recieverBalBefore}`)
 
   //Interact with the approveTx in multi-signature wallet
-
-
+  await sigWallet.connect(addr2).approveTx(1);
+  await sigWallet.connect(addr3).approveTx(1);
+  
+  const recieverBalAfter = await gtkToken.balanceOf(recipient);
+  console.log(`Recipient Balance Before approval" ${recieverBalAfter}`)
 
 }
 
