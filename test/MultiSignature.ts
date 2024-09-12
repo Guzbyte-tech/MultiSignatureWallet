@@ -93,7 +93,7 @@ describe("MultiSignature Wallet Contract Test.", function(){
             gtkToken.transfer(wallet.getAddress(),amountToTransfer);
 
             const _amount = ethers.parseUnits("1", 18);
-            expect(await wallet.connect(signers[0]).transfer(_amount, receipents[1], gtkToken.getAddress())).to.not.be.revertedWith("can't send zero amount")
+            await expect(wallet.connect(signers[0]).transfer(_amount, receipents[1], gtkToken.getAddress())).to.not.be.revertedWith("can't send zero amount")
 
         });
 
@@ -264,7 +264,9 @@ describe("MultiSignature Wallet Contract Test.", function(){
             // await wallet.connect(signers[0]).approveTx(2);
             await wallet.connect(signers[1]).approveTx(2);
             await wallet.connect(signers[2]).approveTx(2);
-            await wallet.connect(signers[3]).approveTx(2);
+            
+
+            await expect(wallet.connect(signers[3]).approveTx(2)).to.not.be.revertedWith("Can't sign twice.")
         });
 
         it("Should check if transaction has already been signed by a signer.", async function(){
@@ -275,6 +277,7 @@ describe("MultiSignature Wallet Contract Test.", function(){
             const amountToTransfer = ethers.parseUnits("10", 18);
             gtkToken.transfer(wallet.getAddress(),amountToTransfer);
             const _amount = ethers.parseUnits("1", 18);
+            
             await wallet.connect(signers[0]).transfer(_amount, signers[1], gtkToken.getAddress());
             await wallet.connect(signers[0]).transfer(_amount, signers[1], gtkToken.getAddress());
             
@@ -315,14 +318,5 @@ describe("MultiSignature Wallet Contract Test.", function(){
             await expect(wallet.connect(signers[1]).approveTx(2)).to.not.reverted;
             
         });
-
-
-
-
-    
     });
-
-   
 });
-
-// 0x0000000000000000000000000000000000000000

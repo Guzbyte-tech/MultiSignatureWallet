@@ -3,9 +3,11 @@ pragma solidity ^0.8.17;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract MultiSignature {
-    uint8 public quorum;
+    uint256 public quorum;
     uint8 public noOfValidSigners;
     uint256 public txCount;
+
+    // error FewValidSigners();
 
     struct Transaction {
         uint256 id;
@@ -19,7 +21,7 @@ contract MultiSignature {
         address tokenAddress;
         address[] transactionSigners;
         string trxType;
-        uint8 newQuorum;
+        uint256 newQuorum;
     }
 
     mapping(address => bool) isValidSigner;
@@ -29,7 +31,7 @@ contract MultiSignature {
     mapping(address => mapping(uint256 => bool)) hasSigned;
 
     //Assuming the msg.sender is Just deploying the contract and not part of the signers of the transaction
-    constructor(uint8 _quorum, address[] memory _validSigners) {
+    constructor(uint256 _quorum, address[] memory _validSigners) {
         require(_validSigners.length > 1, "few valid signers");
         require(_quorum > 1, "quorum is too small");
 
@@ -62,7 +64,7 @@ contract MultiSignature {
         require(_amount > 0, "can't send zero amount");
         require(_recipient != address(0), "address zero found");
         require(_tokenAddress != address(0), "address zero found");
-
+        
         require(
             IERC20(_tokenAddress).balanceOf(address(this)) >= _amount,
             "insufficient funds"
@@ -125,8 +127,6 @@ contract MultiSignature {
             _quorum
         );
     }
-
-    
 
     function createTransaction(
         uint256 _amount,
