@@ -13,12 +13,12 @@ async function main() {
   // console.log(signers);
 
 
-  console.log(signers);
+  // console.log(signers);
 
   //Create MultiSignature Wallet
   const createWallet = await walletFactory.createMultisigWallet(3, signers);
   const wallet = await createWallet.wait();
-  console.log("Create MultiSig Clone:", wallet)
+  // console.log("Create MultiSig Clones:", wallet)
   const walletClone = await walletFactory.getMultiSigClones();
   console.log("New Wallet clone addresses: ", walletClone);
 
@@ -32,13 +32,13 @@ async function main() {
   const trToken = await gtkToken.transfer(walletClone1, amountToTransfer_);
   trToken.wait();
   console.log("Transfer some GTK ERC Token to wallet");
-  const cloneBal = gtkToken.balanceOf(walletClone1);
-  console.log(`Clone one ${walletClone1} GTK Contract Balance:  ${cloneBal}` )
+  const cloneBal = await gtkToken.balanceOf(walletClone1);
+  console.log(`Clone One ${walletClone1} GTK Contract Balance:  ${cloneBal}` )
 
-   //Interact with transfer function.
-//   const amountToTransfer = ethers.parseUnits("1", 18);
-//   const trf = await sigWallet.transfer(amountToTransfer, "0x06D97198756295A96C2158a23963306f507b2f69", GTKtokenAddr);
-//   console.log("Transfer from multisig wallet initiated: ", trf);
+  //Interact with transfer function.
+  const amountToTransfer = ethers.parseUnits("1", 18);
+  const trf = await sigWallet.connect(addr1).transfer(amountToTransfer, "0x06D97198756295A96C2158a23963306f507b2f69", GTKtokenAddr);
+  console.log("Transfer from multisig wallet initiated with block hash", trf.hash);
 
   //Interact with the approveTx in multi-signature wallet
 
