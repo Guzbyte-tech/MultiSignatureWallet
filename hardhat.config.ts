@@ -20,12 +20,30 @@ if (!process.env.ETHERSCAN_API_KEY) {
 const config: HardhatUserConfig = {
   solidity: "0.8.24",
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      "lisk-sepolia": "123",
+      "sepolia" : process.env.ETHERSCAN_API_KEY,
+    },
+    customChains: [
+      {
+        network: "lisk-sepolia",
+        chainId: 4202,
+        urls: {
+          apiURL: "https://sepolia-blockscout.lisk.com/api",
+          browserURL: "https://sepolia-blockscout.lisk.com/",
+        },
+      },
+    ], 
   },
   networks: {
-    sepolia: {
+    "sepolia": {
       url: process.env.SEPOLIA_RPC_URL,
       accounts: [process.env.PRIVATE_KEY],
+    },
+    "lisk-sepolia": {
+      url: process.env.LISK_RPC_URL!,
+      accounts: [process.env.PRIVATE_KEY!],
+      gasPrice: 1000000000,
     },
   },
   
